@@ -1,0 +1,22 @@
+#!/bin/bash
+# recursive vimdiff - run vimdiff against all differing files in two directories, one pair at a time.
+src=$1
+src=$( cd -P "$src" ; pwd )
+echo "Source (left side) is $src"
+
+trg=$2
+trg=$( cd -P "$trg" ; pwd )
+echo "Target (right side) is $trg"
+
+diffopts="-q" # -b"
+
+cd "$src"
+echo now in `pwd`
+find . \
+    \( -name .svn -o -name ZendGdata\* -o -name .git \) -prune \
+     -o \
+     \( -type f -o -type l \) ! -name \*.po ! -name \*.mo ! -name \*.png ! -name \*.pot ! -name utmail.log \
+    \( -exec echo diff $diffopts "{}" "$trg/{}" \; -exec  diff $diffopts "{}" "$trg/{}" \; \
+        -o \
+        \( -exec test -e "$trg/{}" \; -a -exec vimdiff "{}" "$trg/{}" \; \) \
+    \) 2> /dev/null 

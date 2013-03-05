@@ -1,0 +1,10 @@
+#!/bin/bash
+# Wait until a machine responds to a ping
+#
+echo `date` :: starting to wait for ping $1
+while ! ping -w 1 -c 1 $* > /dev/null 2>&1
+do
+    echo -n .
+    sleep 1
+done
+echo `date` :: got ping response

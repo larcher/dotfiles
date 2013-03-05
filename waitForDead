@@ -1,0 +1,32 @@
+#!/bin/bash
+# wait for a process to die ... so you can do something else
+#  ex: waitfordead apt-get && send-jabber 'all done installing!'
+task=$1
+user=${2:-$USER}
+self=`basename "$0"`
+
+function check() 
+{
+    hits=`ps -u$user | egrep $task | egrep -v "grep|$self" | wc -l` 
+    echo $hits
+    return $hits
+
+}
+if [ "`check`" = "0" ] ; then
+    echo Task $task is not running .. no need to wait
+    exit 1
+else
+    echo Waiting for $task to die
+    done='no'
+    while [ "$done" = "no" ] ;
+    do    
+        #ps -fularcher | egrep $task | egrep -qv "grep|$0"  || unset done
+        [ "`check`" = "0" ] && unset done 
+        sleep 4 
+        #echo -n .
+    done 
+    echo
+    echo $task is no longer running
+    exit 0
+fi
+
